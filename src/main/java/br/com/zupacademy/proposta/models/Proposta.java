@@ -1,6 +1,8 @@
 package br.com.zupacademy.proposta.models;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -8,6 +10,14 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
+import org.springframework.util.Assert;
+
+import br.com.zupacademy.proposta.enums.EstadoProposta;
+import br.com.zupacademy.proposta.enums.TipoRestricao;
+import br.com.zupacademy.proposta.feign.VerificaRestricaoFinanceira;
+import br.com.zupacademy.proposta.models.request.SolicitacaoAnaliseRestricaoRequest;
+import br.com.zupacademy.proposta.models.response.SolicitacaoAnaliseRestricaoResponse;
 
 @Entity
 public class Proposta {
@@ -33,6 +43,10 @@ public class Proposta {
 	@Positive
 	private Double salario;
 
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private EstadoProposta estadoDaProposta = EstadoProposta.NAO_ELEGIVEL;
+
 	@Deprecated
 	public Proposta() {
 	}
@@ -45,12 +59,29 @@ public class Proposta {
 		this.salario = salario;
 	}
 
-	public Object getId() {
+	public Long getId() {
 		return this.id;
 	}
 
 	public String getDocumento() {
 		return documento;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void avaliaProposta(Proposta proposta, VerificaRestricaoFinanceira verificaRestricaoFinanceira) {
+		SolicitacaoAnaliseRestricaoResponse retornoAnalise = verificaRestricaoFinanceira
+				.verificaRestricao(SolicitacaoAnaliseRestricaoRequest.build(proposta));
+
+		Assert.notNull(retornoAnalise, "Houve uma falha no processo da análise de restrição financeira.");
+
+		if (retornoAnalise.getTipoRestricao().equals(TipoRestricao.COM_RESTRICAO)) {
+			this.estadoDaProposta = EstadoProposta.NAO_ELEGIVEL;
+		} else {
+			this.estadoDaProposta = EstadoProposta.ELEGIVEL;
+		}
 	}
 
 	@Override
@@ -60,7 +91,7 @@ public class Proposta {
 		result = prime * result + ((getDocumento() == null) ? 0 : getDocumento().hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((endereco == null) ? 0 : endereco.hashCode());
-		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((getNome() == null) ? 0 : getNome().hashCode());
 		result = prime * result + ((salario == null) ? 0 : salario.hashCode());
 		return result;
 	}
@@ -89,10 +120,10 @@ public class Proposta {
 				return false;
 		} else if (!endereco.equals(other.endereco))
 			return false;
-		if (nome == null) {
-			if (other.nome != null)
+		if (getNome() == null) {
+			if (other.getNome() != null)
 				return false;
-		} else if (!nome.equals(other.nome))
+		} else if (!getNome().equals(other.getNome()))
 			return false;
 		if (salario == null) {
 			if (other.salario != null)

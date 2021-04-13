@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import feign.FeignException;
+
 @RestControllerAdvice
 public class HandlerAdvice {
 
@@ -40,6 +42,11 @@ public class HandlerAdvice {
 		mensagens.add(ex.getMotivoExcecao());
 
 		return ResponseEntity.status(ex.getHttpStatus()).body(new ErroPadronizado(mensagens));
+	}
+
+	@ExceptionHandler(FeignException.class)
+	public ResponseEntity<?> handleFeignException(FeignException ex) {
+		return ResponseEntity.status(ex.status()).body(ex.getMessage());
 	}
 
 }
