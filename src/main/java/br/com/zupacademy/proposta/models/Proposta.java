@@ -6,18 +6,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import org.springframework.util.Assert;
-
 import br.com.zupacademy.proposta.enums.EstadoProposta;
-import br.com.zupacademy.proposta.enums.TipoRestricao;
-import br.com.zupacademy.proposta.feign.VerificaRestricaoFinanceira;
-import br.com.zupacademy.proposta.models.request.SolicitacaoAnaliseRestricaoRequest;
-import br.com.zupacademy.proposta.models.response.SolicitacaoAnaliseRestricaoResponse;
 
 @Entity
 public class Proposta {
@@ -59,6 +54,16 @@ public class Proposta {
 		this.salario = salario;
 	}
 
+	public Proposta(@Valid Proposta proposta, EstadoProposta estadoDaProposta) {
+		this.id = proposta.id;
+		this.documento = proposta.documento;
+		this.email = proposta.email;
+		this.nome = proposta.nome;
+		this.endereco = proposta.endereco;
+		this.salario = proposta.salario;
+		this.estadoDaProposta = estadoDaProposta;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -71,17 +76,8 @@ public class Proposta {
 		return nome;
 	}
 
-	public void avaliaProposta(Proposta proposta, VerificaRestricaoFinanceira verificaRestricaoFinanceira) {
-		SolicitacaoAnaliseRestricaoResponse retornoAnalise = verificaRestricaoFinanceira
-				.verificaRestricao(SolicitacaoAnaliseRestricaoRequest.build(proposta));
-
-		Assert.notNull(retornoAnalise, "Houve uma falha no processo da análise de restrição financeira.");
-
-		if (retornoAnalise.getTipoRestricao().equals(TipoRestricao.COM_RESTRICAO)) {
-			this.estadoDaProposta = EstadoProposta.NAO_ELEGIVEL;
-		} else {
-			this.estadoDaProposta = EstadoProposta.ELEGIVEL;
-		}
+	public void atribuirEstadoDaProposta(EstadoProposta estadoDaProposta) {
+		this.estadoDaProposta = estadoDaProposta;
 	}
 
 	@Override
