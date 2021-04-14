@@ -77,15 +77,31 @@ public class Proposta {
 	}
 
 	public Long getId() {
-		return this.id;
+		return id;
 	}
 
 	public String getDocumento() {
 		return documento;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
 	public String getNome() {
 		return nome;
+	}
+
+	public String getEndereco() {
+		return endereco;
+	}
+
+	public Double getSalario() {
+		return salario;
+	}
+
+	public EstadoProposta getEstadoDaProposta() {
+		return estadoDaProposta;
 	}
 
 	public void atribuirEstadoDaProposta(@NotNull EstadoProposta estadoDaProposta) {
@@ -100,11 +116,7 @@ public class Proposta {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getDocumento() == null) ? 0 : getDocumento().hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((endereco == null) ? 0 : endereco.hashCode());
-		result = prime * result + ((getNome() == null) ? 0 : getNome().hashCode());
-		result = prime * result + ((salario == null) ? 0 : salario.hashCode());
+		result = prime * result + ((documento == null) ? 0 : documento.hashCode());
 		return result;
 	}
 
@@ -117,30 +129,10 @@ public class Proposta {
 		if (getClass() != obj.getClass())
 			return false;
 		Proposta other = (Proposta) obj;
-		if (getDocumento() == null) {
-			if (other.getDocumento() != null)
+		if (documento == null) {
+			if (other.documento != null)
 				return false;
-		} else if (!getDocumento().equals(other.getDocumento()))
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (endereco == null) {
-			if (other.endereco != null)
-				return false;
-		} else if (!endereco.equals(other.endereco))
-			return false;
-		if (getNome() == null) {
-			if (other.getNome() != null)
-				return false;
-		} else if (!getNome().equals(other.getNome()))
-			return false;
-		if (salario == null) {
-			if (other.salario != null)
-				return false;
-		} else if (!salario.equals(other.salario))
+		} else if (!documento.equals(other.documento))
 			return false;
 		return true;
 	}
