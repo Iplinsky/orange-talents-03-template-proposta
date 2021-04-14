@@ -27,8 +27,7 @@ public class ScheduleVinculaCartao {
 		ScheduleVinculaCartao.comunicaComSetorDeCartoes = comunicaComSetorDeCartoes;
 	}
 
-//	@Scheduled(fixedRateString = "${periodicidade.consulta-cartao}")
-	@Scheduled(fixedRateString = "3000")
+	@Scheduled(fixedRateString = "${periodicidade.consulta-cartao}")
 	public void vinculaCartaoNaProposta() {
 		CartaoResponse cartaoRetornado = new CartaoResponse();
 

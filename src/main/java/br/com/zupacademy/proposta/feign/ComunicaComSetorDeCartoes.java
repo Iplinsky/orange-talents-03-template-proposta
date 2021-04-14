@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import br.com.zupacademy.proposta.models.request.SolicitacaoCartaoRequest;
 import br.com.zupacademy.proposta.models.response.CartaoResponse;
 
-@FeignClient(url = "http://localhost:8888/api/cartoes", name = "recuperaCartao")
+@FeignClient(url = "${analise.cartao}", name = "recuperaCartao")
 public interface ComunicaComSetorDeCartoes {
 
 	@PostMapping
