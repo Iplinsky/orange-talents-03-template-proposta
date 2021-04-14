@@ -11,23 +11,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.zupacademy.proposta.executa.transacao.ExecutarTransacaoProposta;
 import br.com.zupacademy.proposta.feign.VerificaRestricaoFinanceira;
 import br.com.zupacademy.proposta.handler.exception.ApiErroException;
 import br.com.zupacademy.proposta.models.Proposta;
 import br.com.zupacademy.proposta.models.request.PropostaRequest;
 import br.com.zupacademy.proposta.repository.PropostaRepository;
 import br.com.zupacademy.proposta.utils.AvaliaProposta;
+import br.com.zupacademy.proposta.utils.ExecutarTransacao;
 
 @RestController
 @RequestMapping("/propostas")
 public class PropostaController {
 
 	private PropostaRepository propostaRepository;
-	private ExecutarTransacaoProposta executaTransacao;
+	private ExecutarTransacao executaTransacao;
 	private VerificaRestricaoFinanceira verificaRestricaoFinanceira;
 
-	public PropostaController(PropostaRepository propostaRepository, ExecutarTransacaoProposta executaTransacao,
+	public PropostaController(PropostaRepository propostaRepository, ExecutarTransacao executaTransacao,
 			VerificaRestricaoFinanceira verificaRestricaoFinanceira) {
 		this.propostaRepository = propostaRepository;
 		this.executaTransacao = executaTransacao;

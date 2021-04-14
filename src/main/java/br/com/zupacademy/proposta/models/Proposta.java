@@ -1,11 +1,13 @@
 package br.com.zupacademy.proposta.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -22,31 +24,41 @@ public class Proposta {
 	private Long id;
 
 	@NotBlank
+	@Column(nullable = false)
 	private String documento;
 
 	@Email
 	@NotBlank
+	@Column(nullable = false)
 	private String email;
 
 	@NotBlank
+	@Column(nullable = false)
 	private String nome;
 
 	@NotBlank
+	@Column(nullable = false)
 	private String endereco;
 
 	@NotNull
 	@Positive
+	@Column(nullable = false)
 	private Double salario;
 
 	@Enumerated(EnumType.STRING)
 	@NotNull
+	@Column(nullable = false)
 	private EstadoProposta estadoDaProposta = EstadoProposta.NAO_ELEGIVEL;
+
+	@OneToOne(mappedBy = "proposta")
+	private Cartao cartao;
 
 	@Deprecated
 	public Proposta() {
 	}
 
-	public Proposta(String documento, String email, String nome, String endereco, Double salario) {
+	public Proposta(@NotBlank String documento, @Email @NotBlank String email, @NotBlank String nome,
+			@NotBlank String endereco, @NotNull @Positive Double salario) {
 		this.documento = documento;
 		this.email = email;
 		this.nome = nome;
@@ -54,7 +66,7 @@ public class Proposta {
 		this.salario = salario;
 	}
 
-	public Proposta(@Valid Proposta proposta, EstadoProposta estadoDaProposta) {
+	public Proposta(@Valid Proposta proposta, @NotNull EstadoProposta estadoDaProposta) {
 		this.id = proposta.id;
 		this.documento = proposta.documento;
 		this.email = proposta.email;
@@ -76,8 +88,12 @@ public class Proposta {
 		return nome;
 	}
 
-	public void atribuirEstadoDaProposta(EstadoProposta estadoDaProposta) {
+	public void atribuirEstadoDaProposta(@NotNull EstadoProposta estadoDaProposta) {
 		this.estadoDaProposta = estadoDaProposta;
+	}
+
+	public void vincularCartao(@Valid Cartao cartao) {
+		this.cartao = cartao;
 	}
 
 	@Override

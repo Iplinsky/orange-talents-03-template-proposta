@@ -1,4 +1,4 @@
-package br.com.zupacademy.proposta.executa.transacao;
+package br.com.zupacademy.proposta.utils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -6,13 +6,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
 
-/*
- * Classe criada para controlar o escopo de transação do objeto Proposta
- * liberando o pool de conexões com o banco de dados devido a conexão com serviço externo
- */
-
 @Component
-public class ExecutarTransacaoProposta {
+public class ExecutarTransacao {
 
 	@PersistenceContext
 	private EntityManager entityManager;

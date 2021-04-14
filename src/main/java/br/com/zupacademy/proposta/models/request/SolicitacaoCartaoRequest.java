@@ -2,13 +2,13 @@ package br.com.zupacademy.proposta.models.request;
 
 import br.com.zupacademy.proposta.models.Proposta;
 
-public class SolicitacaoAnaliseRestricaoRequest {
+public class SolicitacaoCartaoRequest {
 
 	private String documento;
 	private String nome;
 	private String idProposta;
 
-	public SolicitacaoAnaliseRestricaoRequest(String documento, String nome, String idProposta) {
+	public SolicitacaoCartaoRequest(String documento, String nome, String idProposta) {
 		this.documento = documento;
 		this.nome = nome;
 		this.idProposta = idProposta;
@@ -26,9 +26,8 @@ public class SolicitacaoAnaliseRestricaoRequest {
 		return idProposta;
 	}
 
-	public static SolicitacaoAnaliseRestricaoRequest build(Proposta proposta) {
-		return new SolicitacaoAnaliseRestricaoRequest(proposta.getDocumento(), proposta.getNome(),
-				proposta.getId().toString());
+	public static SolicitacaoCartaoRequest build(Proposta proposta) {
+		return new SolicitacaoCartaoRequest(proposta.getDocumento(), proposta.getNome(), proposta.getId().toString());
 	}
 
 }

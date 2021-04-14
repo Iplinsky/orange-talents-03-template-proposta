@@ -2,14 +2,14 @@ package br.com.zupacademy.proposta.models.response;
 
 import br.com.zupacademy.proposta.enums.TipoRestricao;
 
-public class SolicitacaoAnaliseRestricaoResponse {
+public class SolicitacaoCartaoResponse {
 
 	private String documento;
 	private String nome;
 	private TipoRestricao resultadoSolicitacao;
 	private String idProposta;
 
-	public SolicitacaoAnaliseRestricaoResponse(String documento, String nome, String resultadoSolicitacao,
+	public SolicitacaoCartaoResponse(String documento, String nome, String resultadoSolicitacao,
 			String idProposta) {
 		this.documento = documento;
 		this.nome = nome;
