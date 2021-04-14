@@ -30,19 +30,23 @@ public class ScheduleVinculaCartao {
 //	@Scheduled(fixedRateString = "${periodicidade.consulta-cartao}")
 	@Scheduled(fixedRateString = "3000")
 	public void vinculaCartaoNaProposta() {
+		CartaoResponse cartaoRetornado = new CartaoResponse();
 
 		List<Proposta> listaDePropostasElegiveis = propostaRepository
 				.findAllByEstadoDaProposta(EstadoProposta.ELEGIVEL);
 
 		for (Proposta proposta : listaDePropostasElegiveis) {
-			
-			CartaoResponse cartaoRetornado = comunicaComSetorDeCartoes.recuperarCartao(proposta.getId().toString());
+			try {
+				cartaoRetornado = comunicaComSetorDeCartoes.recuperarCartao(proposta.getId().toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			Cartao cartao = cartaoRetornado.toModel();
 			executarTransacao.salvarRegistro(cartao);
 			/*
-			 *  Período que realiza o vinculo do cartão com a proposta encaminhada.
-			 *  Uma nova categoria de estado da proposta foi criada para evitar que ela entre
-			 *  dentro deste loop sem a real necessidade.
+			 * Período que realiza o vinculo do cartão com a proposta encaminhada. Uma nova
+			 * categoria de estado da proposta foi criada para evitar que ela entre dentro
+			 * deste loop sem a real necessidade.
 			 */
 			proposta.vincularCartao(cartao);
 			proposta.atribuirEstadoDaProposta(EstadoProposta.CONCLUIDA);

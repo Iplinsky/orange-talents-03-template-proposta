@@ -12,6 +12,9 @@ public class CartaoResponse {
 	private Double limite;
 	private String idProposta;
 
+	public CartaoResponse() {
+	}
+
 	public CartaoResponse(String id, LocalDateTime emitidoEm, String titular, Double limite, String idProposta) {
 		this.id = id;
 		this.emitidoEm = emitidoEm;
