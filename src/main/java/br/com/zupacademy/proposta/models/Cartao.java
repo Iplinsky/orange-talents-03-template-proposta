@@ -1,6 +1,10 @@
 package br.com.zupacademy.proposta.models;
 
+import static org.springframework.util.Assert.notNull;
+
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -28,7 +33,6 @@ public class Cartao {
 	private String nrCartao;
 
 	@CreationTimestamp
-	@PastOrPresent
 	@NotNull
 	@Column(nullable = false)
 	private LocalDateTime emitidoEm;
@@ -41,9 +45,14 @@ public class Cartao {
 	@Column(nullable = false)
 	private Double limite;
 
+	@Valid
 	@OneToOne
 	@JoinColumn(name = "proposta_id")
 	private Proposta proposta;
+
+	@Valid
+	@OneToMany(mappedBy = "cartao")
+	private Set<Biometria> biometria = new HashSet<Biometria>();
 
 	@Deprecated
 	public Cartao() {
@@ -59,7 +68,13 @@ public class Cartao {
 	}
 
 	public void atribuirProposta(@Valid Proposta proposta) {
+		notNull(proposta, "Proposta inválida.");
 		this.proposta = proposta;
+	}
+
+	public void associarBiometria(@Valid Biometria biometria) {
+		notNull(biometria, "Biometria inválida.");
+		this.biometria.add(biometria);
 	}
 
 	@Override

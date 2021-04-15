@@ -40,16 +40,17 @@ public class ScheduleVinculaCartao {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Cartao cartao = cartaoRetornado.toModel();
-			executarTransacao.salvarRegistro(cartao);
-			/*
-			 * Período que realiza o vinculo do cartão com a proposta encaminhada. Uma nova
-			 * categoria de estado da proposta foi criada para evitar que ela entre dentro
-			 * deste loop sem a real necessidade.
+			
+			/*			  
+			 * Período que realiza o vinculo do cartão com a proposta encaminhada.
+			 * Uma nova categoria de EstadoProposta foi criada para evitar que ela entre no loop sem necessidade.
 			 */
+			Cartao cartao = cartaoRetornado.toModel();
+			cartao.atribuirProposta(proposta);
+			executarTransacao.salvarRegistro(cartao);
+			
 			proposta.vincularCartao(cartao);
 			proposta.atribuirEstadoDaProposta(EstadoProposta.CONCLUIDA);
-			cartao.atribuirProposta(proposta);
 			executarTransacao.atualizarRegistro(proposta);
 		}
 	}
