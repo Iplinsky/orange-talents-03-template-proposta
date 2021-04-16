@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.zupacademy.proposta.models.Biometria;
 import br.com.zupacademy.proposta.models.Cartao;
@@ -20,7 +19,7 @@ import br.com.zupacademy.proposta.models.request.BiometriaRequest;
 import br.com.zupacademy.proposta.models.response.BiometriaResponse;
 
 @RestController
-@RequestMapping("/biometria")
+@RequestMapping("/biometrias")
 public class BiometriaController {
 
 	@PersistenceContext
@@ -29,7 +28,7 @@ public class BiometriaController {
 	@PostMapping("/cartao/{id}")
 	@Transactional
 	public ResponseEntity<BiometriaResponse> cadastrarBiometria(@PathVariable("id") Long idCartao,
-			@Valid @RequestBody BiometriaRequest bioRequest, UriComponentsBuilder uriBuilder) {
+			@Valid @RequestBody BiometriaRequest bioRequest) {
 
 		Cartao cartao = em.find(Cartao.class, idCartao);
 
