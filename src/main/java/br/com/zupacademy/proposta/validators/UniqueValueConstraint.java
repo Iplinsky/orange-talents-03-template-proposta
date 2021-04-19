@@ -27,7 +27,7 @@ public class UniqueValueConstraint implements ConstraintValidator<UniqueValue, O
 	@Override
 	public boolean isValid(Object value, ConstraintValidatorContext context) {
 		Query query = em
-				.createQuery(String.format("SELECT 1 FROM %s WHERE %s = :value", classeDominio.getName(), campo))
+				.createQuery(String.format("SELECT 1 FROM %s WHERE UPPER(%s) = UPPER(:value)", classeDominio.getName(), campo))
 				.setParameter("value", value);
 
 		List<?> list = query.getResultList();

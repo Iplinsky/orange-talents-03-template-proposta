@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 public class Biometria {
 
@@ -24,7 +26,9 @@ public class Biometria {
 	private Long id;
 
 	@NotNull
+	@Column(nullable = false)
 	@CreationTimestamp
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate dataCriacaoBiometria = LocalDate.now();
 
 	@ManyToOne

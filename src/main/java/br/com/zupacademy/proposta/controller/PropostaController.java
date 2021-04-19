@@ -38,7 +38,7 @@ public class PropostaController {
 		this.executaTransacao = executaTransacao;
 		this.verificaRestricaoFinanceira = verificaRestricaoFinanceira;
 	}
-
+	
 	@PostMapping
 	@Transactional
 	public ResponseEntity<?> cadastrarProposta(@Valid @RequestBody PropostaRequest request,
@@ -56,18 +56,16 @@ public class PropostaController {
 		proposta = AvaliaProposta.verificaSeExisteRestricaoFinanceira(proposta, verificaRestricaoFinanceira);
 		executaTransacao.atualizarRegistro(proposta);
 
-		return ResponseEntity.created(uriBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri())
-				.build();
+		return ResponseEntity.created(uriBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri()).build();
 	}
 
 	@GetMapping("/consulta/{id}")
 	public ResponseEntity<PropostaResponse> consultarProposta(@PathVariable Long id) {
 		Optional<Proposta> propostaLocalizada = propostaRepository.findById(id);
 
-		if (propostaLocalizada.isPresent()) {
+		return propostaLocalizada.map(proposta -> {
 			return ResponseEntity.ok(new PropostaResponse(propostaLocalizada.get()));
-		}
-		return ResponseEntity.notFound().build();
+		}).orElse(ResponseEntity.notFound().build());
 	}
 
 }
