@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +22,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import br.com.zupacademy.proposta.enums.StatusBloqueioCartao;
 
 @Entity
 public class Cartao {
@@ -54,6 +58,14 @@ public class Cartao {
 	@OneToMany(mappedBy = "cartao")
 	private Set<Biometria> biometria = new HashSet<Biometria>();
 
+	@Valid
+	@OneToMany(mappedBy = "cartao")
+	private Set<CartaoBloqueio> bloqueiosDoCartao = new HashSet<CartaoBloqueio>();
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private StatusBloqueioCartao statusBloqueioCartao = StatusBloqueioCartao.DESBLOQUEADO;
+
 	@Deprecated
 	public Cartao() {
 	}
@@ -67,9 +79,21 @@ public class Cartao {
 		this.limite = limite;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public StatusBloqueioCartao getStatusBloqueioCartao() {
+		return statusBloqueioCartao;
+	}
+
 	public void atribuirProposta(@Valid Proposta proposta) {
 		notNull(proposta, "Proposta inválida.");
 		this.proposta = proposta;
+	}
+
+	public void bloquearCartao() {
+		this.statusBloqueioCartao = StatusBloqueioCartao.BLOQUEADO;
 	}
 
 	public void associarBiometria(@Valid Biometria biometria) {

@@ -64,8 +64,10 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
-					.antMatchers("/propostas/**").hasRole("admin")
-		   			.antMatchers("/biometrias/**").hasAnyRole("admin", "user")		   			
-					.anyRequest().authenticated();
+//					.antMatchers("/propostas/**").hasAnyRole("admin", "user")
+//		   			.antMatchers("/biometrias/**").hasAnyRole("admin", "user")
+//		   			.antMatchers("/bloqueio-cartoes/**").hasAnyRole("admin", "user")		   			
+//					.anyRequest().authenticated();
+					.anyRequest().permitAll();
 	}
 }
