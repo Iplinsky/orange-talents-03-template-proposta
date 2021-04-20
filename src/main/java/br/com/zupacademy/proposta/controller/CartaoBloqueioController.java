@@ -1,6 +1,5 @@
 package br.com.zupacademy.proposta.controller;
 
-import java.net.URI;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,18 +19,19 @@ import br.com.zupacademy.proposta.handler.exception.ApiErroException;
 import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.CartaoBloqueio;
 import br.com.zupacademy.proposta.repository.CartaoRepository;
+import br.com.zupacademy.proposta.utils.AvaliaBloqueioDoCartao;
 import br.com.zupacademy.proposta.utils.ExecutarTransacao;
 
 @RestController
 @RequestMapping("/bloqueio-cartoes")
 public class CartaoBloqueioController {
 
-	private CartaoRepository cartaoRepository;
-	private ExecutarTransacao executarTransacao;
+	private static CartaoRepository cartaoRepository;
+	private static ExecutarTransacao executarTransacao;
 
 	public CartaoBloqueioController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao) {
-		this.cartaoRepository = cartaoRepository;
-		this.executarTransacao = executarTransacao;
+		CartaoBloqueioController.cartaoRepository = cartaoRepository;
+		CartaoBloqueioController.executarTransacao = executarTransacao;
 	}
 
 	@PostMapping("/{id}")
@@ -46,14 +46,13 @@ public class CartaoBloqueioController {
 			if (card.getStatusBloqueioCartao().equals(StatusBloqueioCartao.BLOQUEADO))
 				throw new ApiErroException(HttpStatus.UNPROCESSABLE_ENTITY, "O cartão já se encontra bloqueado.");
 
-			card.bloquearCartao();
-			executarTransacao.atualizarRegistro(card);
+			card = AvaliaBloqueioDoCartao.validaBloqueioDoCartao(card, executarTransacao);
+
 			executarTransacao.salvarRegistro(new CartaoBloqueio(
 					Optional.ofNullable(httpRequest.getHeader("X-FORWARDED-FOR")).orElse(httpRequest.getRemoteAddr()), userAgent, card));
 
-			URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/{id}").buildAndExpand(card.getId()).toUri();
-			
-			return ResponseEntity.ok().header("Location", uri.toString()).build();
+			return ResponseEntity.ok().header("Location", ServletUriComponentsBuilder.fromCurrentContextPath()
+					.path("/{id}").buildAndExpand(card.getId()).toUri().toString()).build();
 
 		}).orElse(ResponseEntity.notFound().build());
 	}

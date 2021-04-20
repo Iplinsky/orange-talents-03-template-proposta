@@ -60,14 +60,16 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {		
-		http.csrf().disable()			
+		http.authorizeRequests()
+//			.antMatchers("/propostas/**").hasAnyRole("admin", "user")
+//		   	.antMatchers("/biometrias/**").hasAnyRole("admin", "user")
+//		   	.antMatchers("/bloqueio-cartoes/**").hasAnyRole("admin", "user")
+			.anyRequest().permitAll()
+			.and().cors()
+			.and().csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.authorizeRequests()
-//					.antMatchers("/propostas/**").hasAnyRole("admin", "user")
-//		   			.antMatchers("/biometrias/**").hasAnyRole("admin", "user")
-//		   			.antMatchers("/bloqueio-cartoes/**").hasAnyRole("admin", "user")		   			
-//					.anyRequest().authenticated();
-					.anyRequest().permitAll();
+		//	Configuração realizada para acessar o banco de dados em memória H2
+			.and().headers().frameOptions().sameOrigin();
 	}
+	
 }

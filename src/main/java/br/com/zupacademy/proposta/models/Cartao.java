@@ -83,6 +83,10 @@ public class Cartao {
 		return id;
 	}
 
+	public String getNrCartao() {
+		return nrCartao;
+	}
+
 	public StatusBloqueioCartao getStatusBloqueioCartao() {
 		return statusBloqueioCartao;
 	}
@@ -124,6 +128,10 @@ public class Cartao {
 		} else if (!nrCartao.equals(other.nrCartao))
 			return false;
 		return true;
+	}
+
+	public String getTitular() {
+		return titular;
 	}
 
 }
