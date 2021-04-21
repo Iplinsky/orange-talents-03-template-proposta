@@ -1,7 +1,6 @@
 package br.com.zupacademy.proposta.controller;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.zupacademy.proposta.metrics.Metrics;
 import br.com.zupacademy.proposta.models.Biometria;
 import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.request.BiometriaRequest;
@@ -22,13 +22,19 @@ import br.com.zupacademy.proposta.models.response.BiometriaResponse;
 @RequestMapping("/biometrias")
 public class BiometriaController {
 
-	@PersistenceContext
-	private EntityManager em;
+	private final EntityManager em;
+	private final Metrics metrics;
+
+	public BiometriaController(EntityManager em, Metrics metrics) {
+		this.em = em;
+		this.metrics = metrics;
+	}
 
 	@PostMapping("/cartao/{id}")
 	@Transactional
-	public ResponseEntity<BiometriaResponse> cadastrarBiometria(@PathVariable("id") Long idCartao,
-			@Valid @RequestBody BiometriaRequest bioRequest) {
+	public ResponseEntity<BiometriaResponse> cadastrarBiometria(@PathVariable("id") Long idCartao, @Valid @RequestBody BiometriaRequest bioRequest) {
+		
+		Long initialTime = System.currentTimeMillis();
 
 		Cartao cartao = em.find(Cartao.class, idCartao);
 
@@ -39,6 +45,9 @@ public class BiometriaController {
 		cartao.associarBiometria(biometria);
 		em.persist(biometria);
 		em.merge(cartao);
+
+		metrics.timer("timer_biometria", initialTime);
+		metrics.counter("biometria_criada");
 
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentContextPath().path("/{id}")
 				.buildAndExpand(biometria.getId()).toUri()).body(new BiometriaResponse(biometria));
