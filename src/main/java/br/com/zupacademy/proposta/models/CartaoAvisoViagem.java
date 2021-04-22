@@ -70,6 +70,18 @@ public class CartaoAvisoViagem {
 		return id;
 	}
 
+	public String getDestinoDaViagem() {
+		return destinoDaViagem;
+	}
+
+	public LocalDate getDataTerminoViagem() {
+		return dataTerminoViagem;
+	}
+
+	public Cartao getCartao() {
+		return cartao;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

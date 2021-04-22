@@ -29,6 +29,6 @@ public class CartaoAvisoViagemRequest {
 
 	public CartaoAvisoViagem toModel(String ipClient, String userAgent, @Valid Cartao card) {
 		notNull(card, "Cartão inválido!");
-		return new CartaoAvisoViagem(userAgent, dataTerminoViagem, ipClient, userAgent, card);
+		return new CartaoAvisoViagem(destinoDaViagem, dataTerminoViagem, ipClient, userAgent, card);
 	}
 }

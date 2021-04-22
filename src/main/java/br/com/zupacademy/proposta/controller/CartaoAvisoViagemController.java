@@ -18,6 +18,7 @@ import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.CartaoAvisoViagem;
 import br.com.zupacademy.proposta.models.request.CartaoAvisoViagemRequest;
 import br.com.zupacademy.proposta.repository.CartaoRepository;
+import br.com.zupacademy.proposta.utils.AvaliaComunicacaoAvisoDeViagem;
 import br.com.zupacademy.proposta.utils.ExecutarTransacao;
 
 @RestController
@@ -27,8 +28,7 @@ public class CartaoAvisoViagemController {
 	private final ExecutarTransacao executarTransacao;
 	private final Metrics metrics;
 
-	public CartaoAvisoViagemController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao,
-			Metrics metrics) {
+	public CartaoAvisoViagemController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao, Metrics metrics) {
 		this.cartaoRepository = cartaoRepository;
 		this.executarTransacao = executarTransacao;
 		this.metrics = metrics;
@@ -39,7 +39,7 @@ public class CartaoAvisoViagemController {
 	public ResponseEntity<?> cadastrarAvisoDeViagem(@PathVariable("id") Long idCartao,
 			@Valid @RequestBody CartaoAvisoViagemRequest cartaoRequest, HttpServletRequest request) {
 		Long initialTime = System.currentTimeMillis();
-		
+
 		Optional<Cartao> cartao = cartaoRepository.findById(idCartao);
 
 		return cartao.map(card -> {
@@ -47,16 +47,16 @@ public class CartaoAvisoViagemController {
 					Optional.ofNullable(request.getHeader("X-FORWARDED-FOR")).orElse(request.getRemoteAddr()),
 					request.getHeader("User-Agent"), card);
 
-			executarTransacao.salvarRegistro(cartaoAvisoViagem);
-			card.atribuirAvisoDeViagem(cartaoAvisoViagem);
-			executarTransacao.atualizarRegistro(card);
+			AvaliaComunicacaoAvisoDeViagem.validaAvisoDeViagem(card, cartaoAvisoViagem, executarTransacao);
 
-			metrics.timer("timer_bloqueio_cartao", initialTime);
-			metrics.counter("bloqueio_cartao_criado");
+			executarTransacao.salvarRegistro(cartaoAvisoViagem);
+
+			metrics.timer("timer_aviso_viagem", initialTime);
+			metrics.counter("aviso_viagem_criado");
 
 			return ResponseEntity.ok().header("Location", ServletUriComponentsBuilder.fromCurrentContextPath()
 					.path("/{id}").buildAndExpand(cartaoAvisoViagem.getId()).toUri().toString()).build();
-			
+
 		}).orElse(ResponseEntity.notFound().build());
 	}
 

@@ -64,6 +64,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 //			.antMatchers("/propostas/**").hasAnyRole("admin", "user")
 //		   	.antMatchers("/biometrias/**").hasAnyRole("admin", "user")
 //		   	.antMatchers("/bloqueio-cartoes/**").hasAnyRole("admin", "user")
+//			.antMatchers("/cartao/**").hasAnyRole("admin", "user")
 			.anyRequest().permitAll()
 			.and().cors()
 			.and().csrf().disable()
