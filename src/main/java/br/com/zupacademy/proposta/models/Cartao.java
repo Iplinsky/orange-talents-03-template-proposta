@@ -62,6 +62,10 @@ public class Cartao {
 	@OneToMany(mappedBy = "cartao")
 	private Set<CartaoBloqueio> bloqueiosDoCartao = new HashSet<CartaoBloqueio>();
 
+	@Valid
+	@OneToMany(mappedBy = "cartao")
+	private Set<CartaoAvisoViagem> avisosDeViagem = new HashSet<CartaoAvisoViagem>();
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusBloqueioCartao statusBloqueioCartao = StatusBloqueioCartao.DESBLOQUEADO;
@@ -94,6 +98,11 @@ public class Cartao {
 	public void atribuirProposta(@Valid Proposta proposta) {
 		notNull(proposta, "Proposta inválida.");
 		this.proposta = proposta;
+	}
+
+	public void atribuirAvisoDeViagem(@Valid CartaoAvisoViagem cartaoAvisoViagem) {
+		notNull(cartaoAvisoViagem, "Cartão inválido.");
+		this.avisosDeViagem.add(cartaoAvisoViagem);
 	}
 
 	public void bloquearCartao() {

@@ -31,7 +31,8 @@ public class CartaoBloqueioController {
 	private final ExecutarTransacao executarTransacao;
 	private final Metrics metrics;
 
-	public CartaoBloqueioController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao, Metrics metrics) {
+	public CartaoBloqueioController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao,
+			Metrics metrics) {
 		this.cartaoRepository = cartaoRepository;
 		this.executarTransacao = executarTransacao;
 		this.metrics = metrics;
@@ -42,7 +43,7 @@ public class CartaoBloqueioController {
 	public ResponseEntity<?> bloquearCartao(@PathVariable("id") Long id,
 			@RequestHeader(name = "User-Agent") String userAgent, HttpServletRequest httpRequest) {
 		Long initialTime = System.currentTimeMillis();
-		
+
 		Optional<Cartao> cartao = cartaoRepository.findById(id);
 
 		return cartao.map(card -> {
@@ -52,12 +53,14 @@ public class CartaoBloqueioController {
 
 			card = AvaliaBloqueioDoCartao.validaBloqueioDoCartao(card, executarTransacao);
 
-			executarTransacao.salvarRegistro(new CartaoBloqueio(
-					Optional.ofNullable(httpRequest.getHeader("X-FORWARDED-FOR")).orElse(httpRequest.getRemoteAddr()), userAgent, card));
+			CartaoBloqueio cartaoBloqueio = new CartaoBloqueio(
+					Optional.ofNullable(httpRequest.getHeader("X-FORWARDED-FOR")).orElse(httpRequest.getRemoteAddr()), userAgent, card);
 
-			metrics.timer("timer_bloqueio_cartao", initialTime);;
+			executarTransacao.salvarRegistro(cartaoBloqueio);
+
+			metrics.timer("timer_bloqueio_cartao", initialTime);
 			metrics.counter("bloqueio_cartao_criado");
-			
+
 			return ResponseEntity.ok().header("Location", ServletUriComponentsBuilder.fromCurrentContextPath()
 					.path("/{id}").buildAndExpand(card.getId()).toUri().toString()).build();
 

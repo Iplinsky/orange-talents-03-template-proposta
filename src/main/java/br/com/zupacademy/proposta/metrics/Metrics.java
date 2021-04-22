@@ -19,10 +19,10 @@ public class Metrics {
 	public Metrics(MeterRegistry meterRegistry) {
 		this.meterRegistry = meterRegistry;
 	}
-	
+
 	private Collection<Tag> retornaTagCollection() {
 		Collection<Tag> tags = new ArrayList<Tag>();
-		tags.add(Tag.of("emissora", "Mastercard")); 
+		tags.add(Tag.of("emissora", "Mastercard"));
 		tags.add(Tag.of("banco", "Itaú"));
 		return tags;
 	}

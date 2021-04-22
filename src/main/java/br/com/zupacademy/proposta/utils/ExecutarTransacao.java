@@ -24,4 +24,8 @@ public class ExecutarTransacao {
 		return object;
 	}
 
+	public <T> Object buscarRegistroPeloId(T Object, Long id) {
+		return entityManager.find(Object.getClass(), id);
+	}
+
 }
