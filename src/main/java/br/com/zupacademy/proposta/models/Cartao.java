@@ -66,6 +66,10 @@ public class Cartao {
 	@OneToMany(mappedBy = "cartao")
 	private Set<CartaoAvisoViagem> avisosDeViagem = new HashSet<CartaoAvisoViagem>();
 
+	@Valid
+	@OneToMany(mappedBy = "cartao")
+	private Set<CarteiraDigital> carteiraDigital = new HashSet<CarteiraDigital>();
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusBloqueioCartao statusBloqueioCartao = StatusBloqueioCartao.DESBLOQUEADO;
@@ -91,8 +95,16 @@ public class Cartao {
 		return nrCartao;
 	}
 
+	public String getTitular() {
+		return titular;
+	}
+
 	public StatusBloqueioCartao getStatusBloqueioCartao() {
 		return statusBloqueioCartao;
+	}
+
+	public Set<CarteiraDigital> getCarteiraDigital() {
+		return carteiraDigital;
 	}
 
 	public void atribuirProposta(@Valid Proposta proposta) {
@@ -112,6 +124,11 @@ public class Cartao {
 	public void associarBiometria(@Valid Biometria biometria) {
 		notNull(biometria, "Biometria inválida.");
 		this.biometria.add(biometria);
+	}
+
+	public void associarCarteiraDigital(CarteiraDigital carteiraDigital) {
+		notNull(carteiraDigital, "Carteira digital inválida.");
+		this.carteiraDigital.add(carteiraDigital);
 	}
 
 	@Override
@@ -137,10 +154,6 @@ public class Cartao {
 		} else if (!nrCartao.equals(other.nrCartao))
 			return false;
 		return true;
-	}
-
-	public String getTitular() {
-		return titular;
 	}
 
 }

@@ -36,7 +36,7 @@ public class CartaoBloqueio {
 	@Valid
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "cartao_id")
+	@JoinColumn(name = "cartao_id", nullable = false)
 	private Cartao cartao;
 
 	@Deprecated

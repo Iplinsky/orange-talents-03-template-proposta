@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.zupacademy.proposta.models.request.CartaoAssociaCarteiraDigitalRequest;
 import br.com.zupacademy.proposta.models.request.CartaoComunicaAvisoDeViagemFeignRequest;
 import br.com.zupacademy.proposta.models.request.CartaoComunicaBloqueioRequest;
 import br.com.zupacademy.proposta.models.request.SolicitacaoCartaoRequest;
@@ -33,5 +34,10 @@ public interface ComunicaComSetorDeCartoes {
 	@Headers("Content-Type: application/json")
 	public void avisarViagem(@PathVariable("id") String nrCartao,
 			@RequestBody CartaoComunicaAvisoDeViagemFeignRequest cartaoAvisoDeViagemRequest);
+
+	@PostMapping("/{id}/carteiras")
+	@Headers("Content-Type: application/json")
+	public void associarCarteiraDigital(@PathVariable("id") String nrCartao,
+			@RequestBody CartaoAssociaCarteiraDigitalRequest cartaoAssociaCarteiraDigital);
 
 }
