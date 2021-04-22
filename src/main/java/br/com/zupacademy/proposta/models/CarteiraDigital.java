@@ -44,7 +44,7 @@ public class CarteiraDigital {
 	public CarteiraDigital() {
 	}
 
-	public CarteiraDigital(@Email @NotBlank String email, TipoCarteiraDigital tipoCarteiraDigital,
+	public CarteiraDigital(@Email @NotBlank String email, @NotNull TipoCarteiraDigital tipoCarteiraDigital,
 			@NotNull @Valid Cartao cartao) {
 		this.email = email;
 		this.tipoCarteiraDigital = tipoCarteiraDigital;

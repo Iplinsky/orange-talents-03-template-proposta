@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.zupacademy.proposta.metrics.Metrics;
 import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.CarteiraDigital;
 import br.com.zupacademy.proposta.models.request.CarteiraDigitalRequest;
@@ -24,10 +25,12 @@ import br.com.zupacademy.proposta.utilsi.AvaliaAssociacaoComCarteiraDigital;
 @RequestMapping("/carteiras/cartao")
 public class CarteiraDigitalController {
 
+	private final Metrics metrics;
 	private final CartaoRepository cartaoRepository;
 	private final ExecutarTransacao executarTransacao;
 
-	public CarteiraDigitalController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao) {
+	public CarteiraDigitalController(CartaoRepository cartaoRepository, ExecutarTransacao executarTransacao, Metrics metrics) {
+		this.metrics = metrics;
 		this.cartaoRepository = cartaoRepository;
 		this.executarTransacao = executarTransacao;
 	}
@@ -35,21 +38,23 @@ public class CarteiraDigitalController {
 	@PostMapping("/{id}")
 	@Transactional
 	public ResponseEntity<?> cadastrarCarteiraDigital(@PathVariable("id") Long id, @Valid @RequestBody CarteiraDigitalRequest request) {
+		Long initialTime = System.currentTimeMillis();
 
 		Optional<Cartao> cartao = cartaoRepository.findById(id);
 
 		return cartao.map(card -> {
+			
 			CarteiraDigital carteiraDigital = request.toModel(card);
-
 			AvaliaAssociacaoComCarteiraDigital.validarAssociacao(card, carteiraDigital, executarTransacao);
-
 			executarTransacao.salvarRegistro(carteiraDigital);
 
+			metrics.timer("timer_cartao_digital", initialTime );
+			metrics.counter("cartao_digital_criado");
+			
 			return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentContextPath().path("/{id}")
 					.buildAndExpand(carteiraDigital.getId()).toUri()).build();
 
 		}).orElse(ResponseEntity.notFound().build());
-
 	}
 
 }

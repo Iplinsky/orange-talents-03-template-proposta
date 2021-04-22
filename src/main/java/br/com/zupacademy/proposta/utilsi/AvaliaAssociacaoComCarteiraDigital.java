@@ -9,7 +9,7 @@ import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.CarteiraDigital;
 import br.com.zupacademy.proposta.models.request.CartaoAssociaCarteiraDigitalRequest;
 import br.com.zupacademy.proposta.utils.ExecutarTransacao;
-import feign.FeignException;
+import feign.FeignException.FeignClientException;
 
 @Component
 public class AvaliaAssociacaoComCarteiraDigital {
@@ -22,14 +22,14 @@ public class AvaliaAssociacaoComCarteiraDigital {
 
 	public static void validarAssociacao(Cartao card, CarteiraDigital carteiraDigital,
 			ExecutarTransacao executarTransacao) {
-		
+
 		card.getCarteiraDigital().stream()
 				.filter(c -> c.getTipoCarteiraDigital().equals(carteiraDigital.getTipoCarteiraDigital()))
 				.forEach(ex -> {
 					throw new ApiErroException(HttpStatus.UNPROCESSABLE_ENTITY,
 							"O cartão já está associado a esta carteira digital!");
 				});
-		
+
 		try {
 			comunicaComSetorDeCartoes.associarCarteiraDigital(card.getNrCartao(),
 					new CartaoAssociaCarteiraDigitalRequest(carteiraDigital.getEmail(),
@@ -37,8 +37,8 @@ public class AvaliaAssociacaoComCarteiraDigital {
 
 			card.associarCarteiraDigital(carteiraDigital);
 			executarTransacao.atualizarRegistro(card);
-			
-		} catch (FeignException ex) {
+
+		} catch (FeignClientException ex) {
 			throw ex;
 		}
 	}

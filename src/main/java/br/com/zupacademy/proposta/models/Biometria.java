@@ -31,15 +31,15 @@ public class Biometria {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate dataCriacaoBiometria = LocalDate.now();
 
-	@ManyToOne
-	@JoinColumn(name = "cartao_id")
-	@Valid
-	@NotNull
-	private Cartao cartao;
-
 	@Lob
 	@Column(nullable = false, unique = true)
 	private String fingerPrint;
+
+	@Valid
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "cartao_id", nullable = false)
+	private Cartao cartao;
 
 	@Deprecated
 	public Biometria() {

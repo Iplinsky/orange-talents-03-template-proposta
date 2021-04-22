@@ -80,7 +80,6 @@ public class Cartao {
 
 	public Cartao(@NotEmpty String nrCartao, @PastOrPresent @NotNull LocalDateTime emitidoEm, @NotEmpty String titular,
 			@NotNull Double limite) {
-		super();
 		this.nrCartao = nrCartao;
 		this.emitidoEm = emitidoEm;
 		this.titular = titular;
