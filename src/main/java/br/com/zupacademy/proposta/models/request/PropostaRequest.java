@@ -37,54 +37,24 @@ public class PropostaRequest {
 		return documento;
 	}
 
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-
 	public String getEmail() {
 		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getNome() {
 		return nome;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
 	public String getEndereco() {
 		return endereco;
-	}
-
-	public void setEndereco(String endereco) {
-		this.endereco = endereco;
 	}
 
 	public Double getSalario() {
 		return salario;
 	}
 
-	public void setSalario(Double salario) {
-		this.salario = salario;
-	}
-
 	public Proposta toModel() {
 		return new Proposta(this.documento, this.email, this.nome, this.endereco, this.salario);
-	}
-
-	/*
-	 * Utilizado para análise na classe PropostaControllerTest 
-	 * @Test void  deveCriarUmaNovaProposta()
-	 */
-	@Override
-	public String toString() {
-		return "PropostaRequest [documento=" + documento + ", email=" + email + ", nome=" + nome + ", endereco="
-				+ endereco + ", salario=" + salario + "]";
 	}
 
 }

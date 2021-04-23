@@ -12,11 +12,11 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 
 @Component
-public class Metrics {
+public class PrometheusMetrics {
 
 	private final MeterRegistry meterRegistry;
 
-	public Metrics(MeterRegistry meterRegistry) {
+	public PrometheusMetrics(MeterRegistry meterRegistry) {
 		this.meterRegistry = meterRegistry;
 	}
 
