@@ -19,8 +19,8 @@ import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.CarteiraDigital;
 import br.com.zupacademy.proposta.models.request.CarteiraDigitalRequest;
 import br.com.zupacademy.proposta.repository.CartaoRepository;
+import br.com.zupacademy.proposta.utils.AvaliaAssociacaoComCarteiraDigital;
 import br.com.zupacademy.proposta.utils.ExecutarTransacao;
-import br.com.zupacademy.proposta.utilsi.AvaliaAssociacaoComCarteiraDigital;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 

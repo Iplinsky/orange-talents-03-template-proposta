@@ -46,6 +46,7 @@ services:
   keycloak:
     container_name: keycloak
     image: jboss/keycloak
+    restart: on-failure
     ports:
       - 18443:8443
       - 18080:8080
@@ -71,6 +72,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
       POSTGRES_PORT_5432_TCP_ADDR: 127.0.0.1
+      KEYCLOAK_FRONTEND_URL: http://keycloak:8080/auth
     networks:
       - card-net
 
@@ -135,19 +137,17 @@ services:
     container_name: prometheus
     image: prom/prometheus
     volumes:
-     - prometheus-volume:/etc/prometheus/
-#    network_mode: bridge
-    ports:
-      - "9090:9090"
-    networks:
-      - card-net
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-volume:/etc/prometheus/
+    network_mode: host
+    expose:
+      - 9090
 
   grafana:
     container_name: grafana
     image: grafana/grafana
     volumes:
       - grafana-volume:/var/lib/grafana
-#    network_mode: bridge
     ports:
       - "3000:3000"
     depends_on:
@@ -172,18 +172,39 @@ services:
     build: ./
     ports:
       - 8081:8081
+    restart: always
+    environment:
+      NOME_DA_APLICACAO: servico de proposta
+      AMBIENTE: desenvolvimento
+      PERIODICIDADE_CONSULTA_CARTAO: 3000
+      LINK_ANALISE_FINANCEIRA: http://localhost:9999/api/solicitacao
+      LINK_ANALISE_CARTAO: http://localhost:8888/api/cartoes
+      LINK_KEYCLOAK: http://localhost:18080/auth
+      JAEGER_ENABLED: "true"
+      JAEGER_ENDPOINT: http://localhost:14268/api/traces
+      JAEGER_SAMPLER: 10
     depends_on:
-      - zookeeper 
-      - kafka
-      - postgres
       - keycloak
       - analise
       - contas
-      - transacoes
-      - jaeger
-      - prometheus
-      - grafana
-      - vault
+      - transacoes      
+      - db
+    networks:
+      - card-net
+
+  db:
+    container_name: db_proposta
+    image: mariadb:latest  
+    restart: always  
+    environment:      
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_HOST: localhost      
+      MYSQL_DATABASE: db_proposta
+    volumes:
+      - mariadb-volume:/var/lib/mariadb
+    ports:
+      - 3306:3306
     networks:
       - card-net
     
@@ -191,6 +212,7 @@ volumes:
   grafana-volume:
   prometheus-volume:
   postgres-volume:
+  mariadb-volume:
 
 networks:
   card-net:

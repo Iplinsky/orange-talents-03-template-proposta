@@ -1,4 +1,4 @@
-package br.com.zupacademy.proposta.utilsi;
+package br.com.zupacademy.proposta.utils;
 
 import java.util.Map;
 
@@ -10,7 +10,6 @@ import br.com.zupacademy.proposta.handler.exception.ApiErroException;
 import br.com.zupacademy.proposta.models.Cartao;
 import br.com.zupacademy.proposta.models.CarteiraDigital;
 import br.com.zupacademy.proposta.models.request.CartaoAssociaCarteiraDigitalRequest;
-import br.com.zupacademy.proposta.utils.ExecutarTransacao;
 import feign.FeignException.FeignClientException;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
