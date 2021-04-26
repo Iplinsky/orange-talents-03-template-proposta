@@ -27,6 +27,14 @@ public class CartaoAvisoViagemRequest {
 		this.dataTerminoViagem = dataTerminoViagem;
 	}
 
+	public String getDestinoDaViagem() {
+		return destinoDaViagem;
+	}
+
+	public LocalDate getDataTerminoViagem() {
+		return dataTerminoViagem;
+	}
+
 	public CartaoAvisoViagem toModel(String ipClient, String userAgent, @Valid Cartao card) {
 		notNull(card, "Cartão inválido!");
 		return new CartaoAvisoViagem(destinoDaViagem, dataTerminoViagem, ipClient, userAgent, card);

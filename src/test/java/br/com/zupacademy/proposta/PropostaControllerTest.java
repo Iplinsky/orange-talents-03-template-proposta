@@ -1,6 +1,7 @@
-package br.com.zupacademy.proposta.controller.test;
+package br.com.zupacademy.proposta;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.zupacademy.proposta.enums.EstadoProposta;
 import br.com.zupacademy.proposta.models.Proposta;
 import br.com.zupacademy.proposta.models.request.PropostaRequest;
 import br.com.zupacademy.proposta.repository.PropostaRepository;
@@ -38,7 +40,7 @@ import br.com.zupacademy.proposta.repository.PropostaRepository;
 @AutoConfigureDataJpa
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
-public class PropostaControllerTest {
+class PropostaControllerTest {
 
 	@Autowired
 	MockMvc mockMvc;
@@ -230,6 +232,38 @@ public class PropostaControllerTest {
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isNotFound());
+	}
+	
+	@Test
+	@DisplayName("Deve retornar o status da proposta como inelegivel caso o documento inicie com o número três")
+	void deveRetornarOStatusDaPropostaComoInelegivelSeONumeroDoDocumentoComecarComTres() throws Exception {
+		PropostaRequest propostaRequest = new PropostaRequest("30505139006", "email_teste@gmail.com", "Fulano", "Rua X", 2500.0);
+		
+		mockMvc.perform(
+				 post(uri)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(convertToJson(propostaRequest)))
+		.andExpect(status().isCreated())
+		.andDo(print());
+		
+		EstadoProposta estadoDaProposta = propostaRepository.findByEmail(propostaRequest.getEmail()).getEstadoDaProposta();		
+		assertEquals(EstadoProposta.NAO_ELEGIVEL, estadoDaProposta);
+	}
+	
+	@Test
+	@DisplayName("Deve retornar o status da proposta como elegível caso o documento não iniciar com o número três")
+	void deveRetornarOStatusDaPropostaComoElegivelSeONumeroDoDocumentoNaoComecarComTres() throws Exception {
+		PropostaRequest propostaRequest = new PropostaRequest("16957138003", "email_teste@gmail.com", "Fulano", "Rua X", 2500.0);
+		
+		mockMvc.perform(
+				 post(uri)
+				 .contentType(MediaType.APPLICATION_JSON)
+				 .content(convertToJson(propostaRequest)))
+		.andExpect(status().isCreated())
+		.andDo(print());
+		
+		EstadoProposta estadoDaProposta = propostaRepository.findByEmail(propostaRequest.getEmail()).getEstadoDaProposta();
+		assertEquals(EstadoProposta.ELEGIVEL, estadoDaProposta);		
 	}
 	
 }

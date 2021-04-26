@@ -13,4 +13,6 @@ public interface PropostaRepository extends JpaRepository<Proposta, Long> {
 
 	List<Proposta> findAllByEstadoDaProposta(EstadoProposta elegivel);
 
+	Proposta findByEmail(String email);
+
 }

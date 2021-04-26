@@ -100,6 +100,10 @@ public class Proposta {
 		return salario;
 	}
 
+	public Cartao getCartao() {
+		return cartao;
+	}
+
 	public EstadoProposta getEstadoDaProposta() {
 		return estadoDaProposta;
 	}
