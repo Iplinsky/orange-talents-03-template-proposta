@@ -17,6 +17,9 @@ public class BiometriaRequest {
 	@UniqueValue(domain = Biometria.class, field = "fingerPrint")
 	private String fingerPrint;
 
+	public BiometriaRequest() {
+	}
+
 	public BiometriaRequest(@NotBlank String fingerPrint) {
 		this.fingerPrint = Base64.getEncoder().encodeToString(fingerPrint.getBytes());
 	}

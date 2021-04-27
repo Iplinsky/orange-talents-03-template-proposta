@@ -2,6 +2,7 @@ package br.com.zupacademy.proposta;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
@@ -14,20 +15,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.zupacademy.proposta.models.request.CartaoAvisoViagemRequest;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
@@ -38,11 +39,11 @@ public class CartaoAvisoViagemControllerTest {
 	
 	@Autowired
 	ObjectMapper mapper;
-	
+		
 	URI uri;
 
 	@BeforeEach
-	void setUp() throws URISyntaxException {
+	void setUp() throws URISyntaxException {		
 		uri = new URI("http://localhost:8080/cartao");		
 	}
 	
@@ -59,8 +60,8 @@ public class CartaoAvisoViagemControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(convertToJson(new CartaoAvisoViagemRequest("Londres", LocalDate.now().plusMonths(1)))))
 		.andExpect(status().isOk())
-		.andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
-		.andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, "http://localhost:8080/1"))		
+		.andExpect(header().exists(HttpHeaders.LOCATION))
+		.andExpect(header().string(HttpHeaders.LOCATION, "http://localhost:8080/1"))		
 		.andDo(print());
 	}
 	

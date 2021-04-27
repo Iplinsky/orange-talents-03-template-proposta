@@ -12,9 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,11 +26,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.zupacademy.proposta.models.request.BiometriaRequest;
-import br.com.zupacademy.proposta.repository.PropostaRepository;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@AutoConfigureDataJpa
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
 class BiometriaControllerTest {
@@ -40,9 +38,6 @@ class BiometriaControllerTest {
 	
 	@Autowired
 	ObjectMapper mapper;
-	
-	@Autowired
-	PropostaRepository propostaRepository;
 	
 	URI uri;
 
@@ -65,9 +60,53 @@ class BiometriaControllerTest {
 				.content(convertToJson(new BiometriaRequest("fingerPrint"))))
 		.andExpect(status().isCreated())
 		.andExpect(header().exists(HttpHeaders.LOCATION))
-		.andExpect(header().string(HttpHeaders.LOCATION, "http://localhost:8080/biometrias/cartao/1"))
+		.andExpect(header().string(HttpHeaders.LOCATION, "http://localhost:8080/1"))
+		.andDo(print());
+	}
+	
+	@Test
+	@DisplayName("Não deve cadastrar uma biometria idêntica")
+	void naoDeveCadastrarUmaBiometriaIdentica() throws JsonProcessingException, Exception {
+		
+		mockMvc.perform(
+				post(uri + "/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(convertToJson(new BiometriaRequest("fingerPrint"))))
+		.andExpect(status().isCreated())
+		.andExpect(header().exists(HttpHeaders.LOCATION))
+		.andExpect(header().string(HttpHeaders.LOCATION, "http://localhost:8080/1"))
 		.andDo(print());
 		
+		mockMvc.perform(
+				post(uri + "/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(convertToJson(new BiometriaRequest("fingerPrint"))))
+		.andExpect(status().isBadRequest())
+		.andDo(print());		
+	}
+	
+	@Test
+	@DisplayName("Não deve cadastrar uma biometria para um cartão inválido")
+	void naoDeveCadastrarUmaBiometriaParaUmCartaoInvalido() throws JsonProcessingException, Exception {		
+		
+		mockMvc.perform(
+				post(uri + "/100")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(convertToJson(new BiometriaRequest("fingerPrint"))))
+		.andExpect(status().isNotFound())
+		.andDo(print());
+	}
+	
+	@Test
+	@DisplayName("Não deve cadastrar uma biometria se o campo estiver vazio")
+	void naoDeveCadastrarUmaBiometriaSeOCampoEstiverVazio() throws JsonProcessingException, Exception {		
+		
+		mockMvc.perform(
+				post(uri + "/2")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(convertToJson(new BiometriaRequest(""))))
+		.andExpect(status().isBadRequest())
+		.andDo(print());
 	}
 
 }

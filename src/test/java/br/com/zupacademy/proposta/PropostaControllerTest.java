@@ -18,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,7 +37,7 @@ import br.com.zupacademy.proposta.models.Proposta;
 import br.com.zupacademy.proposta.models.request.PropostaRequest;
 import br.com.zupacademy.proposta.repository.PropostaRepository;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureDataJpa
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -73,7 +75,7 @@ class PropostaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())
 				.andExpect(header().exists("Location"))
-				.andExpect(header().string(HttpHeaders.LOCATION, ("http://localhost:8080/propostas/1")))
+				.andExpect(header().string(HttpHeaders.LOCATION, ("http://localhost:8080/propostas/3")))
 				.andDo(print());
 		}
 	
@@ -88,7 +90,7 @@ class PropostaControllerTest {
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated())				
 				.andExpect(header().exists("Location"))
-				.andExpect(header().string(HttpHeaders.LOCATION, ("http://localhost:8080/propostas/1")))
+				.andExpect(header().string(HttpHeaders.LOCATION, ("http://localhost:8080/propostas/3")))
 				.andDo(print());
 		
 		mockMvc.perform(MockMvcRequestBuilders
@@ -203,23 +205,26 @@ class PropostaControllerTest {
 	}
 	
 	@Transactional
+	@Rollback
 	@Test
 	@DisplayName("Deve ser capaz de recuperar a proposta com base no identificador enviado pela URI")
 	void deveRecuperarAPropostaComComBaseNoIdentificarEnviadoNaUri() throws JsonProcessingException, Exception {
 		Proposta proposta = new Proposta("91994996064", "email_teste@gmail.com", "Fulano", "Rua X", 2500.0);
 		propostaRepository.save(proposta);		
 				
-		MvcResult mockPropostaResult = mockMvc.perform(MockMvcRequestBuilders
+		MvcResult mockProposta = mockMvc.perform(MockMvcRequestBuilders
 				.get(uri + "/consulta/{id}", proposta.getId())
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andReturn();		
 		
-		assertEquals(mapper.writeValueAsString(proposta), mockPropostaResult.getResponse().getContentAsString());
+		Proposta propostaMockResponse = mapper.readValue(mockProposta.getResponse().getContentAsString(), Proposta.class);		
+		assertEquals(propostaMockResponse, proposta);
 	}
 	
 	@Transactional
+	@Rollback
 	@Test
 	@DisplayName("Não deve retornar a proposta se o identificador for inválido")
 	void naoDeveRetornarAPropostaSeOIdentificadorForInvalido() throws Exception {
@@ -228,7 +233,7 @@ class PropostaControllerTest {
 		
 		mockMvc.perform(MockMvcRequestBuilders
 				// INVALID ID(2)
-				.get(uri + "/consulta/{id}", 2)
+				.get(uri + "/consulta/{id}", 100)
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isNotFound());
@@ -253,7 +258,7 @@ class PropostaControllerTest {
 	@Test
 	@DisplayName("Deve retornar o status da proposta como elegível caso o documento não iniciar com o número três")
 	void deveRetornarOStatusDaPropostaComoElegivelSeONumeroDoDocumentoNaoComecarComTres() throws Exception {
-		PropostaRequest propostaRequest = new PropostaRequest("16957138003", "email_teste@gmail.com", "Fulano", "Rua X", 2500.0);
+		PropostaRequest propostaRequest = new PropostaRequest("93759865003", "email_teste@gmail.com", "Fulano", "Rua X", 2500.0);
 		
 		mockMvc.perform(
 				 post(uri)
