@@ -21,7 +21,7 @@ public class CarteiraDigitalRequest {
 	@Enumerated(EnumType.STRING)
 	private TipoCarteiraDigital tipoCarteiraDigital;
 
-	public CarteiraDigitalRequest(@Email @NotBlank String email, @NotNull String tipoCarteiraDigital) {
+	public CarteiraDigitalRequest(@Email @NotBlank String email, @NotBlank String tipoCarteiraDigital) {
 		this.email = email;
 		this.tipoCarteiraDigital = TipoCarteiraDigital.valueOf(tipoCarteiraDigital);
 	}
