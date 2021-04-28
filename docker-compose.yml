@@ -139,9 +139,10 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-volume:/etc/prometheus/
-    network_mode: host
-    expose:
-      - 9090
+    ports:
+      - "9090:9090"
+    networks:
+      - card-net
 
   grafana:
     container_name: grafana
@@ -171,18 +172,20 @@ services:
     container_name: proposta
     build: ./
     ports:
-      - 8081:8081
-    restart: always
+      - 8081:8080
     environment:
       NOME_DA_APLICACAO: servico de proposta
       AMBIENTE: desenvolvimento
       PERIODICIDADE_CONSULTA_CARTAO: 3000
       LINK_ANALISE_FINANCEIRA: http://localhost:9999/api/solicitacao
       LINK_ANALISE_CARTAO: http://localhost:8888/api/cartoes
-      LINK_KEYCLOAK: http://localhost:18080/auth
+      KEYCLOAK_URL: http://localhost:18080/auth
       JAEGER_ENABLED: "true"
       JAEGER_ENDPOINT: http://localhost:14268/api/traces
       JAEGER_SAMPLER: 10
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/db_proposta?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
     depends_on:
       - keycloak
       - analise
@@ -197,10 +200,7 @@ services:
     image: mariadb:latest  
     restart: always  
     environment:      
-      MYSQL_PASSWORD: 1234
       MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_HOST: localhost      
-      MYSQL_DATABASE: db_proposta
     volumes:
       - mariadb-volume:/var/lib/mariadb
     ports:

@@ -61,17 +61,24 @@ public class CarteiraDigitalControllerTest {
 //		
 //	}
 	
-	@Test
-	@DisplayName("Não deve associar o cartão com uma carteira digital já associada anteriormente")
-	void naoDeveAssociarOCartaoComUmaCarteiraDigitalJaAssociadaAnteriormente() throws Exception {
+//	@Test
+//	@DisplayName("Não deve associar o cartão com uma carteira digital já associada anteriormente")
+//	void naoDeveAssociarOCartaoComUmaCarteiraDigitalJaAssociadaAnteriormente() throws Exception {
 		
-		mockMvc.perform(
-				  post(uri + "/1")
-				 .contentType(APPLICATION_JSON)
-				 .content(toJson(new CarteiraDigitalRequest("teste@gmail.com", "PAYPAL"))))		
-		.andExpect(status().isUnprocessableEntity());
-		
-	}
+//		mockMvc.perform(
+//				  post(uri + "/1")
+//				 .contentType(APPLICATION_JSON)
+//				 .content(toJson(new CarteiraDigitalRequest("teste@gmail.com", TipoCarteiraDigital.PAYPAL.toString()))))
+//		.andExpect(header().exists(LOCATION))
+//		.andExpect(status().isCreated());
+				
+//		mockMvc.perform(
+//				  post(uri + "/1")
+//				 .contentType(APPLICATION_JSON)
+//				 .content(toJson(new CarteiraDigitalRequest("teste@gmail.com", "PAYPAL"))))		
+//		.andExpect(status().isUnprocessableEntity());
+//		
+//	}
 
 	@Test
 	@DisplayName("Não deve associar o cartão a uma carteira digital inexistente")
