@@ -2,7 +2,6 @@ package br.com.zupacademy.proposta.schedule;
 
 import java.util.List;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import br.com.zupacademy.proposta.enums.EstadoProposta;
@@ -27,7 +26,7 @@ public class ScheduleVinculaCartao {
 		ScheduleVinculaCartao.comunicaComSetorDeCartoes = comunicaComSetorDeCartoes;
 	}
 
-	@Scheduled(fixedRateString = "${periodicidade.consulta-cartao}")
+//	@Scheduled(fixedRateString = "${periodicidade.consulta-cartao}")
 	public void vinculaCartaoNaProposta() {
 		CartaoResponse cartaoRetornado = new CartaoResponse();
 

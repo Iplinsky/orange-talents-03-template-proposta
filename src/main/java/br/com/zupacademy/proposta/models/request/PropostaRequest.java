@@ -5,6 +5,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import org.springframework.security.crypto.encrypt.Encryptors;
+
 import br.com.zupacademy.proposta.models.Proposta;
 import br.com.zupacademy.proposta.validators.ValidateCpfCnpj;
 
@@ -54,7 +56,8 @@ public class PropostaRequest {
 	}
 
 	public Proposta toModel() {
-		return new Proposta(this.documento, this.email, this.nome, this.endereco, this.salario);
+		String encryptedDoc = Encryptors.text("${secret.key}", "cec1745a1b0d9d79").encrypt(this.documento);
+		return new Proposta(encryptedDoc, this.email, this.nome, this.endereco, this.salario);
 	}
 
 }

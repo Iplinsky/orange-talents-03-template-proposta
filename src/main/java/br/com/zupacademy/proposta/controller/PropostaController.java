@@ -49,22 +49,25 @@ public class PropostaController {
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<?> cadastrarProposta(@Valid @RequestBody PropostaRequest request,
-			UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> cadastrarProposta(@Valid @RequestBody PropostaRequest request, UriComponentsBuilder uriBuilder) {
 
 		Long initialTime = System.currentTimeMillis();
 		Span activeSpan = tracer.activeSpan();
-		
+
 		activeSpan.setTag("user.email", request.getEmail());
 		activeSpan.log(Map.of("event", "iniciando cadastro de proposta para o usuario " + request.getEmail()));
 
-		Proposta proposta = request.toModel();
+		/*
+		 * NECESSÁRIO RECUPERAR OS DOCUMENTOS DO BANCO DE DADOS E DESCRIPTOGRAFA-LOS
+		 * PARA SER FEITA A COMPARAÇÃO COM O VALOR DO DOCUMENTO RECEBIDO PELA REQUISIÇÃO.
+		 */
+		long counterExistsProposta = propostaRepository.findAll().stream().filter(pr -> pr.getDocumentoDecrypt().equalsIgnoreCase(request.getDocumento())).count();
 
-		boolean existeProposta = propostaRepository.existsPropostaByDocumento(proposta.getDocumento());
-
-		if (existeProposta)
+		if (counterExistsProposta > 0)
 			throw new ApiErroException(HttpStatus.UNPROCESSABLE_ENTITY,
 					"Já existe uma proposta relacionada a este documento!");
+
+		Proposta proposta = request.toModel();
 
 		executaTransacao.salvarRegistro(proposta);
 		proposta = AvaliaProposta.verificaSeExisteRestricaoFinanceira(proposta, verificaRestricaoFinanceira, tracer);
@@ -72,22 +75,25 @@ public class PropostaController {
 
 		metrics.timer("timer_proposta", initialTime);
 		metrics.counter("proposta_criada");
-		
-		activeSpan.log(Map.of("event", "processo de cadastro da proposta finalizado para o usuario " + request.getEmail() + " com sucesso."));
 
-		return ResponseEntity.created(uriBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri()).build();
+		activeSpan.log(Map.of("event",
+				"processo de cadastro da proposta finalizado para o usuario " + request.getEmail() + " com sucesso."));
+
+		return ResponseEntity.created(uriBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri())
+				.build();
 	}
 
 	@GetMapping("/consulta/{id}")
 	public ResponseEntity<PropostaResponse> consultarProposta(@PathVariable Long id) {
-		Span activeSpan = tracer.activeSpan();		
+		Span activeSpan = tracer.activeSpan();
 		activeSpan.setTag("id.proposta", id);
 		activeSpan.log(Map.of("event", "consultando proposta de id " + id));
-		
-		Optional<Proposta> propostaLocalizada = propostaRepository.findById(id);		
+
+		Optional<Proposta> propostaLocalizada = propostaRepository.findById(id);
 
 		return propostaLocalizada.map(proposta -> {
-			activeSpan.log(Map.of("event", "finalizando o processo de consulta a proposta de id " + id + " com sucesso."));
+			activeSpan.log(
+					Map.of("event", "finalizando o processo de consulta a proposta de id " + id + " com sucesso."));
 			return ResponseEntity.ok(new PropostaResponse(propostaLocalizada.get()));
 		}).orElse(ResponseEntity.notFound().build());
 	}

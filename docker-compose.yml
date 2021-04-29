@@ -183,6 +183,7 @@ services:
       JAEGER_ENABLED: "true"
       JAEGER_ENDPOINT: http://localhost:14268/api/traces
       JAEGER_SAMPLER: 10
+      SECRET_KEY: C*F-JaNdRgUjXn2r5u8x/A?D(G+KbPeS
       SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/db_proposta?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234

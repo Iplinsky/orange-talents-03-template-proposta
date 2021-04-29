@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import org.springframework.security.crypto.encrypt.Encryptors;
+
 import br.com.zupacademy.proposta.enums.EstadoProposta;
 
 @Entity
@@ -82,6 +84,10 @@ public class Proposta {
 
 	public String getDocumento() {
 		return documento;
+	}
+
+	public String getDocumentoDecrypt() {
+		return Encryptors.text("${secret.key}", "cec1745a1b0d9d79").decrypt(documento);
 	}
 
 	public String getEmail() {

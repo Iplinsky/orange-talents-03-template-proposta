@@ -27,7 +27,7 @@ public class SolicitacaoCartaoRequest {
 	}
 
 	public static SolicitacaoCartaoRequest build(Proposta proposta) {
-		return new SolicitacaoCartaoRequest(proposta.getDocumento(), proposta.getNome(), proposta.getId().toString());
+		return new SolicitacaoCartaoRequest(proposta.getDocumentoDecrypt(), proposta.getNome(), proposta.getId().toString());
 	}
 
 }
